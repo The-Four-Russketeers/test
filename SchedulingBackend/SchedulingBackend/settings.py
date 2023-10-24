@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api.apps.ApiConfig', # calls AppConfig class from api folder - this adds the api app to the project
-    'rest_framework' # adds the rest framework app to the project - we will need this to make the api
+    'rest_framework', # adds the rest framework app to the project - we will need this to make the api
+    'corsheaders'# adds the cors-headers app
 ]
 
 MIDDLEWARE = [
