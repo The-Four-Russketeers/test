@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import main #imports main function from .views in api folder
+from . import views #imports main function from .views in api folder
 
 urlpatterns = [
-    path('',main) #If we get a blank url, call the main function frrom views
+   path('',views.LeadListCreate.as_view()) #When we type in the url: domain/api - we get transported to the api view
 ]
