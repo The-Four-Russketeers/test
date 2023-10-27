@@ -1,11 +1,32 @@
-from django.shortcuts import render
-from .models import UserInfo
-from rest_framework import generics # imports templates and stuff for generic api user interface
-from .serializers import LeadSerializer
+from django.contrib.auth import login, logout
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import UserLoginSerializer
+from rest_framework import permissions, status
+from .validations import validate_email, validate_password
 
 
-# This will house all our endpoints 
 
-class LeadListCreate(generics.ListCreateAPIView): #ListCreateAPIView is a generic template for an API
-    queryset = UserInfo.objects.all()
-    serializer_class = LeadSerializer
+
+class UserLogin(APIView):
+	permission_classes = (permissions.AllowAny,)
+	authentication_classes = (SessionAuthentication,)
+	##
+	def post(self, request):
+		data = request.data
+		assert validate_email(data)
+		assert validate_password(data)
+		serializer = UserLoginSerializer(data=data)
+		if serializer.is_valid(raise_exception=True):
+			user = serializer.check_user(data)
+			login(request, user)
+			return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserLogout(APIView):
+	permission_classes = (permissions.AllowAny,)
+	authentication_classes = ()
+	def post(self, request):
+		logout(request)
+		return Response(status=status.HTTP_200_OK)

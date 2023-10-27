@@ -2,5 +2,6 @@ from django.urls import path
 from . import views #imports main function from .views in api folder
 
 urlpatterns = [
-   path('',views.LeadListCreate.as_view()) #When we type in the url: domain/api - we get transported to the api view
+   path('login', views.UserLogin.as_view(), name='login'),
+	path('logout', views.UserLogout.as_view(), name='logout'),
 ]
