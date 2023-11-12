@@ -87,12 +87,16 @@ WSGI_APPLICATION = 'SchedulingBackend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'capstoneproject',
+        'USER': 'wescobar',
+        'PASSWORD': 'Atu_01189',
+        'HOST': '10.60.170.172',   # Set to the host where your MySQL server is running
+        'PORT': '3306',
     }
 }
 
-AUTH_USER_MODEL = 'api.UserInfo'
+#AUTH_USER_MODEL = 'api.UserInfo'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
