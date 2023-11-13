@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import UserLoginSerializer
 from rest_framework import permissions, status
-from .validations import validate_email, validate_password,custom_validation
+from .validations import validate_email, validate_password
 
 
 class UserLogin(APIView):
