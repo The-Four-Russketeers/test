@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'SchedulingBackend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'capstoneproject',
+        'NAME': 'capstonedb',
         'USER': 'wescobar',
         'PASSWORD': 'Atu_01189',
         'HOST': '10.60.170.172',   # Set to the host where your MySQL server is running
