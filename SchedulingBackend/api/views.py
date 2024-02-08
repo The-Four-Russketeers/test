@@ -2,7 +2,7 @@ from django.contrib.auth import login, logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserLoginSerializer
+from .serializers import UserLoginSerializer, UserSerializer
 from rest_framework import permissions, status
 from .validations import validate_email, validate_password
 from django.db import connection
@@ -31,11 +31,21 @@ class UserLogout(APIView):
 		logout(request)
 		return Response(status=status.HTTP_200_OK)
 	
+
+class UserView(APIView):
+	permission_classes = (permissions.IsAuthenticated, ) #ensures the user is Authenticated
+	authentication_classes = (SessionAuthentication,)
+	##
+	def get(sel, request):
+		serializer = UserSerializer(request.user)
+		return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+
 class showSchedule(APIView):
 	permission_classes = (permissions.AllowAny,)
 	def get(self, request):
 		with connection.cursor() as cursor:
-			cursor.execute("SELECT * FROM courses WHERE CourseName = 'American Studies'")
+			cursor.execute("SELECT * FROM courses")
 			result = cursor.fetchall()
 			# Process the result as needed
 		return Response({'result': result})
+
