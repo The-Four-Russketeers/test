@@ -36,16 +36,26 @@ class UserView(APIView):
 	permission_classes = (permissions.IsAuthenticated, ) #ensures the user is Authenticated
 	authentication_classes = (SessionAuthentication,)
 	##
-	def get(sel, request):
+	def get(self, request):
 		serializer = UserSerializer(request.user)
 		return Response({'user': serializer.data}, status=status.HTTP_200_OK)
 
 class showSchedule(APIView):
 	permission_classes = (permissions.AllowAny,)
 	def get(self, request):
+		user_email = request.user.email
 		with connection.cursor() as cursor:
-			cursor.execute("SELECT * FROM courses")
-			result = cursor.fetchall()
-			# Process the result as needed
-		return Response({'result': result})
+			cursor.execute("SELECT TNumber, MajorID FROM student WHERE Email = %s", [user_email])
+			result = cursor.fetchone()  
+			if result:
+				t_number = result[0] 
+				major_id = result[1]  
+			else:
+				t_number = None
+				major_id = None
+			return Response({'t_number': t_number, 'major_id': major_id})
+	
+
+
+    
 
