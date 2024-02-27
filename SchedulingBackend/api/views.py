@@ -6,6 +6,7 @@ from .serializers import UserLoginSerializer, UserSerializer
 from rest_framework import permissions, status
 from .validations import validate_email, validate_password
 from django.db import connection
+import requests 
 
 
 class UserLogin(APIView):
@@ -54,7 +55,7 @@ class showSchedule(APIView):
 				t_number = None
 				major_id = None
 			return Response({'t_number': t_number, 'major_id': major_id})
-	
+
 
 
     
