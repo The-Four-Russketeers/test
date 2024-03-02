@@ -5,6 +5,7 @@ urlpatterns = [
    path('login', views.UserLogin.as_view(), name='login'),
 	path('logout', views.UserLogout.as_view(), name='logout'),
    path('user', views.UserView.as_view(), name='user'),
-   path('showSchedule', views.showSchedule.as_view(), name = "showSchedule"),
+   path('getTNum', views.getTnum.as_view(), name = "getTNum"),
    path("test", views.test.as_view(), name = "test"),
+   path("getClassesNeeded", views.getClassesNeeded.as_view(), name = "getClassesNeeded"),
 ]

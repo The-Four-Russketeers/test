@@ -42,7 +42,7 @@ class UserView(APIView):
 		return Response({'user': serializer.data}, status=status.HTTP_200_OK)
 
 
-class showSchedule(APIView):
+class getTnum(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request):
@@ -62,6 +62,25 @@ class showSchedule(APIView):
                 major_id = None
             return Response({'t_number': t_number, 'major_id': major_id})
         
+class getClassesNeeded(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        # Create an instance of getTnum view
+        get_tnum_view = getTnum()
+
+        # Call getTnum endpoint to fetch major_id
+        tnum_response = get_tnum_view.get(request)
+        major_id = tnum_response.data.get('major_id')
+
+        # Retrieve class information based on major_id
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT courseSubject, courseNum FROM majorclasses WHERE majorID = %s", [major_id])
+            result = cursor.fetchall()
+            return Response(result)
+
+    
+
 class test(APIView):
     permission_classes = (permissions.AllowAny,)
 
