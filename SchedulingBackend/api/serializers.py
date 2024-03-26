@@ -18,3 +18,10 @@ class UserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = userModel
 		fields = ('email', 'username')
+
+
+class ClassInfoSerializer(serializers.Serializer):
+	courseSubject = serializers.CharField()
+	courseNum = serializers.CharField() 
+	preReqCourseSub = serializers.CharField() 
+	preReqCourseNum = serializers.CharField() 

@@ -2,11 +2,13 @@ from django.contrib.auth import login, logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserLoginSerializer, UserSerializer
+from .serializers import UserLoginSerializer, UserSerializer, ClassInfoSerializer
 from rest_framework import permissions, status
 from .validations import validate_email, validate_password
 from django.db import connection
+from rest_framework.exceptions import NotAuthenticated
 import requests 
+from .calculations import preCheck, checkIfTaken
 
 
 class UserLogin(APIView):
@@ -62,23 +64,48 @@ class getTnum(APIView):
                 major_id = None
             return Response({'t_number': t_number, 'major_id': major_id})
         
+
+    
+from rest_framework.exceptions import NotAuthenticated
+
 class getClassesNeeded(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request):
-        # Create an instance of getTnum view
         get_tnum_view = getTnum()
 
-        # Call getTnum endpoint to fetch major_id
-        tnum_response = get_tnum_view.get(request)
-        major_id = tnum_response.data.get('major_id')
+        try:
+            tnum_response = get_tnum_view.get(request)
+            TNumber = tnum_response.data.get("t_number")
 
-        # Retrieve class information based on major_id
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT courseSubject, courseNum FROM majorclasses WHERE majorID = %s", [major_id])
-            result = cursor.fetchall()
-            return Response(result)
+            if TNumber is None:
+                return Response({'error': 'TNumber not found'}, status=status.HTTP_400_BAD_REQUEST)
 
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT CourseSubject, CourseNum, isTaken FROM classesNeeded WHERE Tnumber = %s", [TNumber])
+                result = cursor.fetchall()
+                classes_info = [{'CourseSubject': row[0], 'CourseNum': row[1], 'isTaken': row[2]} for row in result]
+
+                prerequisites_info = []
+                for course in classes_info:
+                    course_subject = course['CourseSubject']
+                    course_num = course['CourseNum']
+
+                    cursor.execute("SELECT PreReqCourseSub, PreReqCourseNum FROM prerequisites WHERE CourseSubject = %s AND CourseNum = %s", (course_subject, course_num))
+                    prerequisites_result = cursor.fetchall()
+
+                    prerequisites_info.extend([{'CourseSubject': course_subject,
+                                                'CourseNum': course_num,
+                                                'preReqCourseSub': row[0],
+                                                'preReqCourseNum': row[1]} for row in prerequisites_result])
+
+                sortedClassesNeeded = preCheck(classes_info, prerequisites_info) 
+                sortedClassesNeeded = checkIfTaken(sortedClassesNeeded)
+                return Response(sortedClassesNeeded)
+
+        except NotAuthenticated:
+            print("Authentication required")  
+            return Response({'error': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
     
 
 class test(APIView):
