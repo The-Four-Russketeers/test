@@ -7,6 +7,7 @@ from rest_framework import permissions, status
 from .validations import validate_email, validate_password
 from django.db import connection
 import requests 
+from .services import generate_schedule
 
 
 class UserLogin(APIView):
@@ -87,9 +88,10 @@ class test(APIView):
     @staticmethod
     def get(request):
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM courses")
+            cursor.execute("SELECT cn.CourseSubject, cn.CourseNum, c.CourseName, cn.IsTaken, c.CreditHours FROM classesNeeded cn JOIN courses c ON c.CourseSubject = cn.CourseSubject AND c.CourseNum = cn.CourseNum WHERE cn.Tnumber = 'T0123456';")
             result = cursor.fetchall()
-        return Response(result)
+        #return Response(result)
+        return Response(generate_schedule(result))
 
 
 
