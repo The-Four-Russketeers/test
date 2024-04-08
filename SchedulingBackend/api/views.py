@@ -9,6 +9,7 @@ from django.db import connection
 from rest_framework.exceptions import NotAuthenticated
 import requests 
 from .calculations import preCheck, checkIfTaken
+from .services import generate_schedule
 
 
 class UserLogin(APIView):
@@ -114,9 +115,26 @@ class test(APIView):
     @staticmethod
     def get(request):
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM courses")
+            cursor.execute("SELECT cn.CourseSubject, cn.CourseNum, c.CourseName, cn.IsTaken, c.CreditHours FROM classesNeeded cn JOIN courses c ON c.CourseSubject = cn.CourseSubject AND c.CourseNum = cn.CourseNum WHERE cn.Tnumber = 'T0123456'")
+            result = cursor.fetchall()
+        #return Response(result)
+        return Response(generate_schedule(result))
+    
+
+class test2(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    @staticmethod
+    def get(request):
+
+       
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT cn.CourseSubject, cn.CourseNum, c.CourseName, cn.IsTaken, c.CreditHours FROM classesNeeded cn JOIN courses c ON c.CourseSubject = cn.CourseSubject AND c.CourseNum = cn.CourseNum WHERE cn.Tnumber = 'T0123456'")
             result = cursor.fetchall()
         return Response(result)
+
+        
 
 
 

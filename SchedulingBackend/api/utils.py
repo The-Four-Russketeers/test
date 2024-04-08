@@ -21,3 +21,13 @@ def percentage_done(data):
             taken+=1 # Number of classes they have taken
     percentage = math.ceil(taken/len(data) * 100) # Divide the number of classes taken by how many they need (rounded up)
     return(percentage)
+
+# 1). Sort the classesNeeded dict
+def sort_dict(input_dict):
+    # Sort the dictionary items based on the CourseNum key
+    sorted_items = sorted(input_dict.items(), key=lambda x: x[1]["CourseNum"])
+    
+    # Create a new dictionary with the sorted items
+    sorted_dict = {key: value for key, value in sorted_items}
+    
+    return sorted_dict
