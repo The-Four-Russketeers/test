@@ -8,4 +8,5 @@ urlpatterns = [
    path('getTNum', views.getTnum.as_view(), name = "getTNum"),
    path("test", views.test.as_view(), name = "test"),
    path("getClassesNeeded", views.getClassesNeeded.as_view(), name = "getClassesNeeded"),
+   path("test2",views.test2.as_view(), name = "test2"),
 ]
